@@ -49,18 +49,21 @@ def recognize_image_entities(image_id):
     ner_text = ""
     recognized_lines =[]
     
-
-    if float(line['confidence']) >= MIN_CONFIDENCE:
-        for line in text_lines:
+    #appending lines with confidence score > 80 to an empty list
+    for line in text_lines:
+        if float(line['confidence']) >= MIN_CONFIDENCE:
             recognized_lines.append(
                 line['text']
             )
 
     print(recognized_lines)
+
+    #appending all recognized lines together to form a text string
     for i in recognized_lines:
         ner_text = ner_text + " " + i
     print(ner_text)
 
+    #calling the named_entity_recognition_service to detected entities from the recognized text
     ner_lines = named_entity_recognition_service.detect_entities(ner_text)
     print(ner_lines, "\n")
 
