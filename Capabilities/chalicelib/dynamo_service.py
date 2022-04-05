@@ -1,5 +1,6 @@
 from pprint import pprint
 import boto3
+import uuid, json
 
 from business_card import BusinessCard
 
@@ -10,8 +11,9 @@ class DynamoService:
         self.dynamodb = boto3.client('dynamodb')
 
     def store_card(self, card: BusinessCard):
-        # response = self.dynamodb.put_item(TableName = self.table_name,
-        #                      Item = str(card) )
+        
+        # Ensure primary key - low collision
+        card.card_id = str(uuid.uuid4())
         response = self.dynamodb.put_item(
             TableName=self.table_name,
             Item=card.toDynamoFormat()
@@ -37,38 +39,59 @@ class DynamoService:
     def get_card(self, card_id):
         response = self.dynamodb.get_item(
             TableName=self.table_name,
-            Key={'card_id': {'S' : str(card_id)}}
+            Key={'card_id': {'S' : card_id}}
         )
         return response
 
-    def search_cards(self, filter, sort):
-        pass
+    def search_cards(self, filter=None, sort=None):
+        response = self.dynamodb.query(
+            TableName=self.table_name,
+            Select='ALL_ATTRIBUTES',
+            Limit = 10,
+            KeyConditionExpression= 'card_names = :filter_criteria',
+            ExpressionAttributeValues={
+                ':filter_criteria': {'S': filter}
+            
+        }
+)
 
 
 if __name__ == '__main__':
-    card = BusinessCard(12345, 'Nero', [55567890], [
-                        'pepe@pepe.com'], 'NeroCorp', 'www.nero.com.co', '123 address road')
+    
     dynamo = DynamoService('BusinessCards')
-    response = dynamo.store_card(card)
-    print('Card 1 Created')
-    pprint(response)
+    
+    for idx in range(1,20,1):
+        card = BusinessCard(12345, f'Nero{idx}', [55567890], [
+                        'pepe@pepe.com'], f'NeroCorp{idx}', 'www.nero.com.co', f'123-{idx} address road')
+        response = dynamo.store_card(card)
+        print('Card Created')
+        pprint(response)    
+    
+    response = dynamo.search_cards('Nero1')
+    print('Search filter')
+    print(response)
 
-    card2 = BusinessCard(12346, 'Nero2', [555678902], [
-                         'pepe2@pepe.com'], 'NeroCorp2', 'www.nero2.com.co', '234 address road')
-    dynamo = DynamoService('BusinessCards')
-    response = dynamo.store_card(card2)
-    print('Card 2 Created')
-    pprint(response)
+    # response = dynamo.get_card('')
+    
+    # print('Card 2 Retrieved')
+    # pprint(response)
+    
+    # card2 = BusinessCard(12346, 'Nero2', [555678902], [
+    #                      'pepe2@pepe.com'], 'NeroCorp2', 'www.nero2.com.co', '234 address road')
+    # dynamo = DynamoService('BusinessCards')
+    # response = dynamo.store_card(card2)
+    # print('Card 2 Created')
+    # pprint(response)
 
-    card2.company_name = 'COMP258'
-    response = dynamo.update_card(card2)
-    print('Card 2 Updated')
-    pprint(response)
+    # card2.company_name = 'COMP258'
+    # response = dynamo.update_card(card2)
+    # print('Card 2 Updated')
+    # pprint(response)
 
-    response = dynamo.delete_card(12345)
-    print('Card 1 Removed')
-    pprint(response)
+    # response = dynamo.delete_card(12345)
+    # print('Card 1 Removed')
+    # pprint(response)
 
-    response = dynamo.get_card(12346)
-    print('Card 2 Retrieved')
-    pprint(response)
+    # response = dynamo.get_card(12346)
+    # print('Card 2 Retrieved')
+    # pprint(response)

@@ -41,7 +41,7 @@ class BusinessCard:
 
         value = {
             'card_id': {'S': str(self.card_id)},
-            'names': {'S': self.names},
+            'card_names': {'S': self.names},
             'telephone_numbers': {'NS': [str(tn) for tn in self.telephone_numbers]},
             'email_addresses': {'SS': self.email_addresses},
             'company_name': {'S': self.company_name},
@@ -51,7 +51,7 @@ class BusinessCard:
 
         if isUpdate:
             value = {
-                'names': {'Value': {'S': self.names}, 'Action': 'PUT'},
+                'card_names': {'Value': {'S': self.names}, 'Action': 'PUT'},
                 'telephone_numbers': {'Value': {'NS': [str(tn) for tn in self.telephone_numbers]},  'Action': 'PUT'},
                 'email_addresses': {'Value': {'SS': self.email_addresses},  'Action': 'PUT'},
                 'company_name': {'Value': {'S': self.company_name},  'Action': 'PUT'},
