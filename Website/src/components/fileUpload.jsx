@@ -7,22 +7,80 @@ FileUpload.propTypes = {
 
 };
 
+const serverUrl = "http://127.0.0.1:8000";
+
 function FileUpload(props) {
+
     const [image, setImage] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
 
     useEffect(() => {
         if(image){
             setImageUrl(URL.createObjectURL(image));
+
         }
     },[image])
 
+    useEffect(()=>{
+        let jwtAccessToken = localStorage.getItem('jwt_access_token');
+        if(!jwtAccessToken){
+            window.location = '/login';
+        }
+    })
 
+    const convertToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+          const fileReader = new FileReader();
+          fileReader.readAsDataURL(file);
+          fileReader.onload = () => {
+            resolve(fileReader.result);
+          };
+          fileReader.onerror = (error) => {
+            reject(error);
+          };
+        });
+      };
 
-    function handleOnImageChange(e){
-        // console.log("event",e, e.target.files[0])
+    async function handleOnImageChange(e){
         setImage(e.target.files[0]);
+        const base64 = await convertToBase64(e.target.files[0]);
+
+        console.log("imageByteArray",base64)
+        console.log("here")
+        fetch(serverUrl + "/images", {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({filename: e.target.files[0].name, filebytes: base64})
+        }).then(response => response.json())
+        .then(res=>{
+            console.log("res333", res);
+            let fileId = res.fileId;
+            let fileUrl = res.fileUrl;
+
+            fetch(serverUrl + "/images/"+fileId+"/recognize_entities", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: {}
+            }).then(response => response.json())
+            .then(res=>{
+                console.log("res444", res);
+
+            })
+
+
+
+        })
+        .catch((error)=>{
+            console.log(error)
+        })
     }
+
     console.log("image",image,"imageUrl",imageUrl)
     return (
         <div className="body">

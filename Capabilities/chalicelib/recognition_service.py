@@ -6,6 +6,9 @@ class RecognitionService:
         self.bucket_name = storage_service.get_storage_location()
 
     def detect_text(self, file_name):
+        print("file_name", file_name)
+        print("self: ", self)
+        print("self.bucket_name", self.bucket_name)
         response = self.client.detect_text(
             Image = {
                 'S3Object': {
@@ -25,4 +28,3 @@ class RecognitionService:
                 })
 
         return lines
-
