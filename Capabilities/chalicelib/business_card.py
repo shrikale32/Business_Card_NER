@@ -5,14 +5,17 @@ from locale import format_string
 class BusinessCard:
 
     def __init__(self,
-                 card_id=-1,
+                 card_id=None,
+                 user_id=None, 
                  names='',
                  telephone_numbers=[],
                  email_addresses=[],
                  company_name='',
                  company_website='',
                  company_address=''):
+        
         self.card_id = card_id
+        self.user_id = user_id
         self.names = str(names)
         self.telephone_numbers = telephone_numbers
         self.email_addresses = email_addresses
@@ -41,6 +44,7 @@ class BusinessCard:
 
         value = {
             'card_id': {'S': str(self.card_id)},
+            'user_id': {'S': str(self.user_id)},
             'card_names': {'S': self.names},
             'telephone_numbers': {'NS': [str(tn) for tn in self.telephone_numbers]},
             'email_addresses': {'SS': self.email_addresses},
@@ -51,6 +55,7 @@ class BusinessCard:
 
         if isUpdate:
             value = {
+                'user_id': {'Value': {'S': self.user_id}, 'Action': 'PUT'},
                 'card_names': {'Value': {'S': self.names}, 'Action': 'PUT'},
                 'telephone_numbers': {'Value': {'NS': [str(tn) for tn in self.telephone_numbers]},  'Action': 'PUT'},
                 'email_addresses': {'Value': {'SS': self.email_addresses},  'Action': 'PUT'},
@@ -58,4 +63,4 @@ class BusinessCard:
                 'company_website': {'Value': {'S': str(self.company_website)},  'Action': 'PUT'},
                 'company_address': {'Value': {'S': self.company_address},  'Action': 'PUT'}
             }
-        return value
+        return value 

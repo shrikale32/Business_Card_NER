@@ -61,12 +61,12 @@ if __name__ == '__main__':
 
     dynamo = DynamoService('BusinessCards')
 
-    # for idx in range(1,51,1):
-    #     card = BusinessCard(12345, f'Nero{idx}', [55567890], [
-    #                     'pepe@pepe.com'], f'NeroCorp{idx}', 'www.nero.com.co', f'123-{idx} address road')
-    #     response = dynamo.store_card(card)
-    #     print('Card Created')
-    #     pprint(response)
+    for idx in range(1,51,1):
+        card = BusinessCard(12345, f'User_name{idx}', f'Nero{idx}', [55567890], [
+                        'pepe@pepe.com'], f'NeroCorp{idx}', 'www.nero.com.co', f'123-{idx} address road')
+        response = dynamo.store_card(card)
+        print('Card Created')
+        pprint(response)
 
     response = dynamo.search_cards('Nero1')
     print('Search filter')
