@@ -1,5 +1,6 @@
 from pprint import pprint
 import boto3
+import boto3.dynamodb
 import uuid
 import json
 
@@ -47,12 +48,18 @@ class DynamoService:
     def search_cards(self, filter=None, sort=None):
         response = self.dynamodb.scan(
             TableName=self.table_name,
+            # Max number of records > Check for LastEvaluatedKey in response for next page
             Limit=10,
-            ProjectionExpression= "card_id, card_names, email_addresses, company_name",
-            # FilterExpression='card_names = :filter_criteria',
-            # ExpressionAttributeValues={
-            #     ':filter_criteria': {'S': filter}
-            # }
+            # Columns to be displayed in the list view??
+            ProjectionExpression="card_id, card_names, email_addresses, company_name",
+            FilterExpression='contains(card_names,:filter_criteria) OR '\
+            'contains(email_addresses,:filter_criteria) OR '\
+            'contains(company_name,:filter_criteria) OR '\
+            'contains(company_website,:filter_criteria) OR '\
+            'contains(company_address,:filter_criteria) ',
+            ExpressionAttributeValues={
+                ':filter_criteria': {'S': filter}
+            },
         )
         return response
 
@@ -61,14 +68,14 @@ if __name__ == '__main__':
 
     dynamo = DynamoService('BusinessCards')
 
-    for idx in range(1,51,1):
-        card = BusinessCard(12345, f'User_name{idx}', f'Nero{idx}', [55567890], [
-                        'pepe@pepe.com'], f'NeroCorp{idx}', 'www.nero.com.co', f'123-{idx} address road')
-        response = dynamo.store_card(card)
-        print('Card Created')
-        pprint(response)
+    # for idx in range(1,31,1):
+    #     card = BusinessCard(12345, f'User_name{idx}', f'Nero{idx}', [55567890], [
+    #                     'pepe@pepe.com'], f'NeroCorp{idx}', 'www.nero.com.co', f'123-{idx} address road')
+    #     response = dynamo.store_card(card)
+    #     print('Card Created')
+    #     pprint(response)
 
-    response = dynamo.search_cards('Nero1')
+    response = dynamo.search_cards('nero')
     print('Search filter')
     print(response)
 
