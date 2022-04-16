@@ -1,5 +1,5 @@
 from math import ceil
-from business_card import BusinessCard
+from chalicelib.business_card import BusinessCard
 
 class BusinessCardList:
     """This class encapsulates a list of BusinessCard objects and stores 
@@ -15,8 +15,8 @@ class BusinessCardList:
         """
         self.raw_result = search_result
         self.cards = []
-        self.page = page
-        self.pagesize = pagesize
+        self.page = int(page)
+        self.pagesize = int(pagesize)
         self.count = 0
         self.numpages = 0
 
@@ -28,7 +28,7 @@ class BusinessCardList:
         create BusinessCard objects with pagination
         """
         items = self.raw_result['Items']
-        self.count = self.raw_result['Count']
+        self.count = int(self.raw_result['Count'])
 
         # Extract card information
         for item in items:

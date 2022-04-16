@@ -1,7 +1,6 @@
 import json
 from locale import format_string
 
-
 class BusinessCard:
 
     def __init__(self,
@@ -12,7 +11,8 @@ class BusinessCard:
                  email_addresses=[],
                  company_name='',
                  company_website='',
-                 company_address=''):
+                 company_address='',
+                 image_storage=''):
         
         self.card_id = card_id
         self.user_id = user_id
@@ -22,7 +22,8 @@ class BusinessCard:
         self.company_name = company_name
         self.company_website = company_website
         self.company_address = company_address
-        
+        self.image_storage = image_storage
+                
         self.names = self._format_strings(self.names, all_caps=True)
         self.company_address = self._format_strings(self.company_address)
     
@@ -33,14 +34,12 @@ class BusinessCard:
         return response
 
     def __repr__(self):
-        return self.names
-        # return json.dumps(self,
-        #                   default=lambda o: o.__dict__, sort_keys=True, indent=4)
+        return json.dumps(self,
+                          default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
     def __str__(self):
-        return self.names
-        # return json.dumps(self,
-        #                   default=lambda o: o.__dict__, sort_keys=True, indent=4)
+        return json.dumps(self,
+                          default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
     def toDynamoFormat(self, isUpdate=False):
 
@@ -53,6 +52,7 @@ class BusinessCard:
             'company_name': {'S': self.company_name},
             'company_website': {'S': str(self.company_website)},
             'company_address': {'S': self.company_address},
+            'image_storage': {'S': self.image_storage},
         }
 
         if isUpdate:
@@ -63,6 +63,7 @@ class BusinessCard:
                 'email_addresses': {'Value': {'SS': self.email_addresses},  'Action': 'PUT'},
                 'company_name': {'Value': {'S': self.company_name},  'Action': 'PUT'},
                 'company_website': {'Value': {'S': str(self.company_website)},  'Action': 'PUT'},
-                'company_address': {'Value': {'S': self.company_address},  'Action': 'PUT'}
+                'company_address': {'Value': {'S': self.company_address},  'Action': 'PUT'},
+                'image_storage': {'Value': {'S': self.image_storage},  'Action': 'PUT'}
             }
         return value 
