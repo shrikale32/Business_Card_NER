@@ -43,9 +43,17 @@ function FileUpload(props) {
 
     async function handleOnImageChange(e){
         setImage(e.target.files[0]);
-        const base64 = await convertToBase64(e.target.files[0]);
+        // const base64 = await convertToBase64(e.target.files[0]);
+        let file = e.target.files[0];
+        let converter = new Promise(function(resolve, reject) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result
+                .toString().replace(/^data:(.*,)?/, ''));
+            reader.onerror = (error) => reject(error);
+        });
+        let encodedString = await converter;
 
-        console.log("imageByteArray",base64)
         console.log("here")
         fetch(serverUrl + "/images", {
             method: "POST",
@@ -53,7 +61,7 @@ function FileUpload(props) {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({filename: e.target.files[0].name, filebytes: base64})
+            body: JSON.stringify({filename: e.target.files[0].name, filebytes: encodedString})
         }).then(response => response.json())
         .then(res=>{
             console.log("res333", res);

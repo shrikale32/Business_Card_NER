@@ -36,8 +36,7 @@ def upload_image():
     """processes file upload and saves file to storage service"""
     request_data = json.loads(app.current_request.raw_body)
     file_name = request_data['filename']
-    # file_bytes = base64.b64decode(request_data['filebytes'])
-    file_bytes = request_data['filebytes']
+    file_bytes = base64.b64decode(request_data['filebytes'])
     print("file_bytes", file_bytes)
     image_info = storage_service.upload_file(file_bytes, file_name)
 
