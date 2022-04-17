@@ -33,14 +33,14 @@ class BusinessCard:
         return response
 
     def __repr__(self):
-        return self.names
-        # return json.dumps(self,
-        #                   default=lambda o: o.__dict__, sort_keys=True, indent=4)
+        # return self.names
+        return json.dumps(self,
+                          default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
     def __str__(self):
-        return self.names
-        # return json.dumps(self,
-        #                   default=lambda o: o.__dict__, sort_keys=True, indent=4)
+        # return self.names
+        return json.dumps(self,
+                          default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
     def toDynamoFormat(self, isUpdate=False):
 
