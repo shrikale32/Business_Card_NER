@@ -1,11 +1,10 @@
 import json
-from locale import format_string
 
 class BusinessCard:
 
     def __init__(self,
-                 card_id=None,
                  user_id=None, 
+                 card_id=None,
                  names='',
                  telephone_numbers=[],
                  email_addresses=[],
@@ -14,8 +13,8 @@ class BusinessCard:
                  company_address='',
                  image_storage=''):
         
-        self.card_id = card_id
         self.user_id = user_id
+        self.card_id = card_id
         self.names = str(names)
         self.telephone_numbers = telephone_numbers
         self.email_addresses = email_addresses
@@ -34,18 +33,20 @@ class BusinessCard:
         return response
 
     def __repr__(self):
-        return json.dumps(self,
-                          default=lambda o: o.__dict__, sort_keys=True, indent=4)
+        return self.names
+        # return json.dumps(self,
+        #                   default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
     def __str__(self):
-        return json.dumps(self,
-                          default=lambda o: o.__dict__, sort_keys=True, indent=4)
+        return self.names
+        # return json.dumps(self,
+        #                   default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
     def toDynamoFormat(self, isUpdate=False):
 
         value = {
-            'card_id': {'S': str(self.card_id)},
             'user_id': {'S': str(self.user_id)},
+            'card_id': {'S': str(self.card_id)},
             'card_names': {'S': self.names},
             'telephone_numbers': {'NS': [str(tn) for tn in self.telephone_numbers]},
             'email_addresses': {'SS': self.email_addresses},
@@ -57,7 +58,7 @@ class BusinessCard:
 
         if isUpdate:
             value = {
-                'user_id': {'Value': {'S': self.user_id}, 'Action': 'PUT'},
+                # 'user_id': {'Value': {'S': self.user_id}, 'Action': 'PUT'},
                 'card_names': {'Value': {'S': self.names}, 'Action': 'PUT'},
                 'telephone_numbers': {'Value': {'NS': [str(tn) for tn in self.telephone_numbers]},  'Action': 'PUT'},
                 'email_addresses': {'Value': {'SS': self.email_addresses},  'Action': 'PUT'},
