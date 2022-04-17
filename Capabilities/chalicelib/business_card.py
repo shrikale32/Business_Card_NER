@@ -22,10 +22,10 @@ class BusinessCard:
         self.company_website = company_website
         self.company_address = company_address
         self.image_storage = image_storage
-                
+
         self.names = self._format_strings(self.names, all_caps=True)
         self.company_address = self._format_strings(self.company_address)
-    
+
     def _format_strings(self, value, all_caps=False):
         response = str(value).strip()
         if all_caps:
@@ -48,7 +48,7 @@ class BusinessCard:
             'user_id': {'S': str(self.user_id)},
             'card_id': {'S': str(self.card_id)},
             'card_names': {'S': self.names},
-            'telephone_numbers': {'NS': [str(tn) for tn in self.telephone_numbers]},
+            'telephone_numbers': {'SS': [str(tn) for tn in self.telephone_numbers]},
             'email_addresses': {'SS': self.email_addresses},
             'company_name': {'S': self.company_name},
             'company_website': {'S': str(self.company_website)},
@@ -67,4 +67,4 @@ class BusinessCard:
                 'company_address': {'Value': {'S': self.company_address},  'Action': 'PUT'},
                 'image_storage': {'Value': {'S': self.image_storage},  'Action': 'PUT'}
             }
-        return value 
+        return value

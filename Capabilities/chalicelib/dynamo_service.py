@@ -17,7 +17,7 @@ class DynamoService:
             table_name (str): Table name in DynamoDB service
         """
         self.table_name = table_name
-        self.dynamodb = boto3.client('dynamodb')
+        self.dynamodb = boto3.client('dynamodb','us-east-1')
 
     def store_card(self, card: BusinessCard):
         """Creates a new card record
@@ -31,6 +31,7 @@ class DynamoService:
 
         # Ensure primary key - low collision
         card.card_id = str(uuid.uuid4())
+
         response = self.dynamodb.put_item(
             TableName=self.table_name,
             Item=card.toDynamoFormat()
