@@ -4,6 +4,7 @@ from chalicelib.business_card_list import BusinessCardList
 from chalicelib.business_card import BusinessCard
 from chalicelib import storage_service
 from chalicelib import recognition_service
+from chalicelib import textract_service
 # importing the named entity recognition service
 from chalicelib import named_entity_recognition_service
 
@@ -24,6 +25,7 @@ storage_location = 'business-card-bucket'
 table_name = 'BusinessCards'
 storage_service = storage_service.StorageService(storage_location)
 recognition_service = recognition_service.RecognitionService(storage_service)
+textract_service = textract_service.TextractService(storage_service)
 named_entity_recognition_service = named_entity_recognition_service.NamedEntityRecognitionService()
 dynamo_service = DynamoService(table_name)
 
@@ -49,7 +51,7 @@ def recognize_image_entities(image_id):
 
     MIN_CONFIDENCE = 80.0
 
-    text_lines = recognition_service.detect_text(image_id)
+    text_lines = textract_service.detect_text(image_id)
     ner_lines = []
 
     ner_text = ""
@@ -89,21 +91,22 @@ def get_cards(query, page, pagesize):
            content_types=['application/json'])
 def post_card():
     """Creates a card"""
-    parsed = parse_qs(app.current_request.json_body)
 
-    card = BusinessCard(parsed['card_id'],
-                        parsed['user_id'],
-                        parsed['user_names'],
-                        parsed['telephone_numbers'],
-                        parsed['email_addresses'],
-                        parsed['company_name'],
-                        parsed['company_website'],
-                        parsed['company_address'],
-                        parsed['image_storage'])
+    req_body = app.current_request.json_body
+    # parsed = parse_qs(app.current_request.json_body)
 
+    card = BusinessCard(req_body['card_id'],
+                        req_body['user_id'],
+                        req_body['user_names'],
+                        req_body['telephone_numbers'],
+                        req_body['email_addresses'],
+                        req_body['company_name'],
+                        req_body['company_website'],
+                        req_body['company_address'],
+                        req_body['image_storage'])
     result = dynamo_service.store_card(card) # True  / False
     new_card_id = card.card_id # Created by the service
-
+    return new_card_id
 
 
 
@@ -129,8 +132,8 @@ def delete_card(card_id):
     """Deletes a card"""
     dynamo_service.delete_card(card_id)
 
-
-@app.route('/cards/{card_id}', methods=['GET'], cors=True)
-def get_card(card_id):
+@app.route('/card/{user_id}', methods=['GET'], cors=True)
+def get_card(user_id):
     """Query a specific card by id"""
-    return dynamo_service.get_card(card_id)
+    return dynamo_service.get_card(user_id)
+    # return "hello"

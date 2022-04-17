@@ -13,6 +13,23 @@ function FileUpload(props) {
 
     const [image, setImage] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
+    const [cardDetails, setCardDetails] = useState({
+        name: '',
+        phone: '',
+        email: '',
+        address: '',
+        website: '',
+        image_url: '',
+    });
+
+    const handleChangeInput = (event,key) => {
+        console.log("event", event.target.value, key)
+        // cardData[key] = event.target.value
+        // setCardData(cardData)
+        // props.cardDetails[key] = event.target.value;
+        setCardDetails({ ...cardDetails, [key]: event.target.value });
+
+    }
 
     useEffect(() => {
         if(image){
@@ -63,10 +80,10 @@ function FileUpload(props) {
             },
             body: JSON.stringify({filename: e.target.files[0].name, filebytes: encodedString})
         }).then(response => response.json())
-        .then(res=>{
-            console.log("res333", res);
-            let fileId = res.fileId;
-            let fileUrl = res.fileUrl;
+        .then(result=>{
+            console.log("res333", result);
+            let fileId = result.fileId;
+            let fileUrl = result.fileUrl;
 
             fetch(serverUrl + "/images/"+fileId+"/recognize_entities", {
                 method: "POST",
@@ -79,6 +96,14 @@ function FileUpload(props) {
             .then(res=>{
                 console.log("res444", res);
 
+                setCardDetails({
+                    name: res.name && res.name[0],
+                    address: res.address && res.address[0],
+                    phone: res.phone && res.phone[0],
+                    website: res.url && res.url[0],
+                    email: res.email && res.email[0],
+                    image_url: fileUrl
+                })
             })
 
 
@@ -105,7 +130,10 @@ function FileUpload(props) {
                         <img src={imageUrl} width="600px" height="400px"/>
                     </div>
                     <div className="infoContainer">
-                        <InfoCard/>
+                        <InfoCard
+                            cardDetails={cardDetails}
+                            handleChangeInput={handleChangeInput}
+                        />
                     </div>
                 </React.Fragment>
                 }

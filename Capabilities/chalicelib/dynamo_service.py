@@ -15,7 +15,7 @@ class DynamoService:
             table_name (str): Table name in DynamoDB service
         """
         self.table_name = table_name
-        self.dynamodb = boto3.client('dynamodb')
+        self.dynamodb = boto3.client('dynamodb','us-east-1')
 
     def store_card(self, card: BusinessCard):
         """Creates a new card record
@@ -26,9 +26,10 @@ class DynamoService:
         Returns:
             bool: Operation result
         """
-        
+
         # Ensure primary key - low collision
         card.card_id = str(uuid.uuid4())
+
         response = self.dynamodb.put_item(
             TableName=self.table_name,
             Item=card.toDynamoFormat()
@@ -67,7 +68,7 @@ class DynamoService:
         )
         return response['ResponseMetadata']['HTTPStatusCode'] == 200
 
-    def get_card(self, card_id):
+    def get_card(self, user_id):
         """Retrieves card information from DynamoDB
 
         Args:
@@ -78,14 +79,14 @@ class DynamoService:
         """
         response = self.dynamodb.get_item(
             TableName=self.table_name,
-            Key={'card_id': {'S': card_id}}
+            Key={'user_id': {'S': user_id}}
         )
 
         c = None
         if response.__contains__('Item'):
             c = BusinessCard(
-                card_id=response['Item']['card_id']['S'],
                 user_id=response['Item']['user_id']['S'],
+                card_id=response['Item']['card_id']['S'],
                 names=response['Item']['card_names']['S'],
                 email_addresses=response['Item']['email_addresses']['SS'],
                 telephone_numbers=response['Item']['telephone_numbers']['NS'],
