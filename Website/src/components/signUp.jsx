@@ -16,27 +16,26 @@ function SignUp(props) {
           console.error(err);
         }
         console.log(data);
+        window.location = "/login"
       });
     };
 
     return (
-        <div>
-            Sign Up <br></br>
-            <form onSubmit={onSubmit}>
-                <label htmlFor="email">Email</label>
-                <input
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                ></input>
-                <label htmlFor="password">Password</label>
-                <input
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                ></input>
+      <div style={{textAlign: "center", position: 'relative', left: '35%', marginTop: '45px'}}>
+        <div className="form" style={{height: "450px"}}>
+          <div className="title">Sign Up</div>
+          <div className="input-container ic1">
+              <input id="email" className="input" type="email" onChange={(event) => setEmail(event.target.value)} value={email} placeholder=" " />
+              <label htmlFor="email" className="placeholder">Email</label>
+          </div>
+          <div className="input-container ic2">
+              <input id="password" className="input" type="password" placeholder=" " onChange={(event) => setPassword(event.target.value)} value={password} />
+              <label htmlFor="password" className="placeholder">Password</label>
+          </div>
 
-                <button type="submit">Signup</button>
-            </form>
+          <button type="text" className="submit" onClick={(e)=>onSubmit(e)}>Sign Up</button>
         </div>
+      </div>
     );
 }
 

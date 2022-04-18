@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import CRUDTable,
 {
@@ -116,9 +116,28 @@ const styles = {
 
 function List(props) {
 
+  const [search, setSearch] = useState('');
+
+  useEffect(()=>{
+    if (!localStorage.getItem('user_sub')){
+      window.location = '/login'
+    }
+  })
+
+  const handleSearchChange = (event) => {
+    let searchTerm = event.target.value;
+    setSearch(searchTerm)
+
+    service.fetchItems();
+
+  }
+
     return (
         <div>
           <div style={styles.container}>
+            <div className="input-container ic1" style={{ border: "2px solid grey"}}>
+                <input id="search" className="input" value={search} onChange={(e)=>handleSearchChange(e)} type="text" placeholder="Search " />
+            </div>
             <CRUDTable
               caption="Cards"
               fetchItems={payload => service.fetchItems(payload)}
@@ -152,25 +171,13 @@ function List(props) {
                   render={DescriptionRenderer}
                 />
               </Fields>
-              <CreateForm
+              {/* <CreateForm
                 title="Card Creation"
                 message="Create a new card!"
                 trigger="Create Card"
                 onSubmit={(card) => {service.create(card)}}
                 submitText="Create"
-                // validate={(values) => {
-                //   const errors = {};
-                //   if (!values.title) {
-                //     errors.title = 'Please, provide card\'s title';
-                //   }
-
-                //   if (!values.description) {
-                //     errors.description = 'Please, provide card\'s description';
-                //   }
-
-                //   return errors;
-                // }}
-              />
+              /> */}
 
               <UpdateForm
                 title="Card Update Process"

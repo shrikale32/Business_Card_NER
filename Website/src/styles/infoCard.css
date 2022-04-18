@@ -1,6 +1,6 @@
 
 .form {
-    background-color: #D3D3D3;
+    background-color: #99badd;
     border-radius: 20px;
     box-sizing: border-box;
     height: 650px;
@@ -58,8 +58,8 @@
     left: 20px;
     position: absolute;
     top: -20px;
-    transform: translateY(0);
-    transition: transform 200ms;
+    /* transform: translateY(0);
+    transition: transform 200ms; */
     width: 76px;
   }
 
@@ -67,13 +67,13 @@
     width: 50px;
   }
 
-  .input:focus ~ .cut,
+  /* .input:focus ~ .cut,
   .input:not(:placeholder-shown) ~ .cut {
     transform: translateY(8px);
-  }
+  } */
 
   .placeholder {
-    color: #65657b;
+    color: grey;
     font-family: sans-serif;
     left: 20px;
     line-height: 14px;

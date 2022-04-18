@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js";
 import UserPool from "../userPool";
+import "../styles/infoCard.css"
+
 
 function Login(props) {
     const [email, setEmail] = useState("");
@@ -35,23 +37,22 @@ function Login(props) {
         });
     };
     return (
-        <div>
-            Login Page <br></br>
-            <form onSubmit={onSubmit}>
-                <label htmlFor="email">Email</label>
-                <input
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                ></input>
-                <label htmlFor="password">Password</label>
-                <input
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                ></input>
+        <div style={{textAlign: "center", position: 'relative', left: '35%', marginTop: '45px'}}>
+            <div className="form" style={{height: "450px"}}>
+            <div className="title">Login</div>
+            <div className="input-container ic1">
+                <input id="email" className="input" type="email" onChange={(event) => setEmail(event.target.value)} value={email} placeholder=" " />
+                <label htmlFor="email" className="placeholder">Email</label>
+            </div>
+            <div className="input-container ic2">
+                <input id="password" className="input" type="password" placeholder=" " onChange={(event) => setPassword(event.target.value)} value={password} />
+                <label htmlFor="password" className="placeholder">Password</label>
+            </div>
 
-                <button type="submit">Login</button>
-            </form>
+            <button type="text" className="submit" onClick={(e)=>onSubmit(e)}>Login</button>
         </div>
+        </div>
+
     );
 }
 

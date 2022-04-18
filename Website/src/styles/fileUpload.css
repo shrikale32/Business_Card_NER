@@ -23,14 +23,14 @@
     font-weight: 700;
     color: white;
     padding: 20px;
-    background-color: maroon;
+    background-color: #0073cf;
     display: inline-block;
     margin-top: 30px;
 }
 
 .inputfile:focus + label,
 .inputfile + label:hover {
-    background-color: red;
+    background-color: #0f52ba;
 }
 
 .imageStyle {
