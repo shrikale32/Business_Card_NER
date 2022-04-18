@@ -3,7 +3,7 @@ import json
 class BusinessCard:
 
     def __init__(self,
-                 user_id=None, 
+                 user_id=None,
                  card_id=None,
                  names='',
                  telephone_numbers=[],
@@ -12,7 +12,7 @@ class BusinessCard:
                  company_website='',
                  company_address='',
                  image_storage=''):
-        
+
         self.user_id = user_id
         self.card_id = card_id
         self.names = str(names)
@@ -60,7 +60,7 @@ class BusinessCard:
             value = {
                 # 'user_id': {'Value': {'S': self.user_id}, 'Action': 'PUT'},
                 'card_names': {'Value': {'S': self.names}, 'Action': 'PUT'},
-                'telephone_numbers': {'Value': {'NS': [str(tn) for tn in self.telephone_numbers]},  'Action': 'PUT'},
+                'telephone_numbers': {'Value': {'SS': [str(tn) for tn in self.telephone_numbers]},  'Action': 'PUT'},
                 'email_addresses': {'Value': {'SS': self.email_addresses},  'Action': 'PUT'},
                 'company_name': {'Value': {'S': self.company_name},  'Action': 'PUT'},
                 'company_website': {'Value': {'S': str(self.company_website)},  'Action': 'PUT'},

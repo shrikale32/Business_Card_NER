@@ -29,7 +29,7 @@ function InfoCard(props) {
                 email_addresses: props.cardDetails.email ? [props.cardDetails.email] : [''],
                 company_name: props.cardDetails.name ? props.cardDetails.name : '',
                 company_website: props.cardDetails.website ? props.cardDetails.website : '',
-                company_address: props.cardDetails.address ? [props.cardDetails.address] : [''],
+                company_address: props.cardDetails.address ? props.cardDetails.address : '',
                 image_storage: props.cardDetails.image_url
             })
         }).then(response => response.json())

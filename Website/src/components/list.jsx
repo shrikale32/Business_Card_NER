@@ -15,25 +15,6 @@ const serverUrl = "http://127.0.0.1:8000";
 
 const DescriptionRenderer = ({ field }) => <textarea {...field} />;
 
-let cards = [
-  {
-    id: 1,
-    name: 'Hitesh Dharmadhikari',
-    phone: '+1 4372404645',
-    email: 'hdharma1@my.centennialcollege.ca',
-    website: 'www.hieetesh.com',
-    address: '10 Eaglewing CT, Scaroborough, ON'
-  },
-  {
-    id: 2,
-    name: 'Shrikant Kale',
-    phone: '+1 4372402324',
-    email: 'skale5@my.centennialcollege.ca',
-    website: 'www.wap.com',
-    address: '10 Eaglewing CT, Scaroborough, ON'
-  },
-];
-
 const SORTERS = {
   NUMBER_ASCENDING: mapper => (a, b) => mapper(a) - mapper(b),
   NUMBER_DESCENDING: mapper => (a, b) => mapper(b) - mapper(a),
@@ -56,32 +37,76 @@ const getSorter = (data) => {
   return sorter;
 };
 
-let count = cards.length;
 const service = {
   fetchItems: (payload) => {
 
-    let result = Array.from(cards);
-    result = result.sort(getSorter(payload.sort));
-    return Promise.resolve(result);
+    let user_id = localStorage.getItem('user_sub');
+    let promise = fetch(serverUrl + "/cards/"+user_id, {
+      method: "GET",
+      headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+      },
+    }).then(response => response.json())
+
+    return Promise.resolve(promise);
   },
   create: (card) => {
-    count += 1;
-    cards.push({
-      ...card,
-      id: count,
-    });
-    return Promise.resolve(card);
+    let promise = fetch(serverUrl + "/cards", {
+      method: "POST",
+      headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+          card_id: null,
+          user_id: localStorage.getItem('user_sub'),
+          user_names: null,
+          telephone_numbers: card.phone ? [card.phone] : [''],
+          email_addresses: card.email ? [card.email] : [''],
+          company_name: card.name ? card.name : '',
+          company_website: card.website ? card.website : '',
+          company_address: card.address ? card.address : '',
+          image_storage: card.image_url ? card.image_url : ''
+      })
+    }).then(response => response.json())
+
+    return Promise.resolve(promise);
   },
   update: (data) => {
-    const card = cards.find(t => t.id === data.id);
-    card.title = data.title;
-    card.description = data.description;
-    return Promise.resolve(card);
+    console.log("data123", data)
+
+    let user_id = localStorage.getItem('user_sub');
+    data['user_id'] =  user_id
+    let promise = fetch(serverUrl + "/cards", {
+      method: "PUT",
+      headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    }).then(response => response.json())
+
+    return Promise.resolve(promise);
+
+    // const card = cards.find(t => t.id === data.id);
+    // card.title = data.title;
+    // card.description = data.description;
+    // return Promise.resolve(card);
+
   },
   delete: (data) => {
-    const card = cards.find(t => t.id === data.id);
-    cards = cards.filter(t => t.id !== card.id);
-    return Promise.resolve(card);
+
+    let user_id = localStorage.getItem('user_sub');
+    let promise = fetch(serverUrl + "/cards/"+user_id+"/"+data.card_id, {
+      method: "DELETE",
+      headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+      },
+    }).then(response => response.json())
+
+    return Promise.resolve(promise);
   },
 };
 
@@ -90,23 +115,6 @@ const styles = {
   };
 
 function List(props) {
-
-    useEffect(()=>{
-      let user_id = localStorage.getItem('user_sub');
-      fetch(serverUrl + "/card/"+user_id, {
-        method: "GET",
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
-      }).then(response => response.json())
-      .then(res=>{
-        console.log("res666", res)
-      })
-      .catch((error)=>{
-          console.log(error)
-      })
-    },[])
 
     return (
         <div>
@@ -148,45 +156,45 @@ function List(props) {
                 title="Card Creation"
                 message="Create a new card!"
                 trigger="Create Card"
-                onSubmit={task => service.create(task)}
+                onSubmit={(card) => {service.create(card)}}
                 submitText="Create"
-                validate={(values) => {
-                  const errors = {};
-                  if (!values.title) {
-                    errors.title = 'Please, provide card\'s title';
-                  }
+                // validate={(values) => {
+                //   const errors = {};
+                //   if (!values.title) {
+                //     errors.title = 'Please, provide card\'s title';
+                //   }
 
-                  if (!values.description) {
-                    errors.description = 'Please, provide card\'s description';
-                  }
+                //   if (!values.description) {
+                //     errors.description = 'Please, provide card\'s description';
+                //   }
 
-                  return errors;
-                }}
+                //   return errors;
+                // }}
               />
 
               <UpdateForm
                 title="Card Update Process"
                 message="Update task"
                 trigger="Update"
-                onSubmit={task => service.update(task)}
+                onSubmit={card => service.update(card)}
                 submitText="Update"
-                validate={(values) => {
-                  const errors = {};
+                // validate={(values) => {
+                //   const errors = {};
 
-                  if (!values.id) {
-                    errors.id = 'Please, provide id';
-                  }
+                //   if (!values.id) {
+                //     errors.id = 'Please, provide id';
+                //   }
 
-                  if (!values.title) {
-                    errors.title = 'Please, provide task\'s title';
-                  }
+                //   if (!values.name) {
+                //     errors.title = 'Please, provide task\'s title';
+                //   }
 
-                  if (!values.description) {
-                    errors.description = 'Please, provide task\'s description';
-                  }
+                //   if (!values.email) {
+                //     errors.description = 'Please, provide task\'s description';
+                //   }
 
-                  return errors;
-                }}
+                //   return errors;
+                // }}
               />
 
               <DeleteForm

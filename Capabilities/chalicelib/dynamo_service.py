@@ -105,10 +105,10 @@ class DynamoService:
         return c
 
     def search_cards(self, user_id, filter='', page=1, pagesize=10):
-        """Method for searching the cards of a particular user. 
+        """Method for searching the cards of a particular user.
         It takes into account the page number and pagesize to retrieve the appropriate elements
         ordering the results first by card names.
-        
+
         To search all items filter should be None or empty string
 
         Args:
@@ -130,6 +130,7 @@ class DynamoService:
                 KeyConditionExpression='user_id = :user_id',
                 # If specific columns needs to be displayed in the list view
                 # ProjectionExpression="card_id, card_names, email_addresses, company_name",
+
                 FilterExpression='contains(card_names,:filter_criteria) OR '\
                 'contains(email_addresses,:filter_criteria) OR '\
                 'contains(company_name,:filter_criteria) OR '\
@@ -150,5 +151,7 @@ class DynamoService:
                 },
             )
 
-        # print(response)
-        return BusinessCardList(response, page, pagesize)
+
+        print(response)
+        return response
+        # return BusinessCardList(response, 1, 10)

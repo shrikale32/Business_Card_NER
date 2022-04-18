@@ -78,13 +78,31 @@ def recognize_image_entities(image_id):
     return ner_lines
 
 
-@app.route('/cards/{user_id}/{query}/{page}/{pagesize}', methods=['GET'], cors=True)
-def get_cards(user_id, query, page, pagesize):
+@app.route('/cards/{user_id}', methods=['GET'], cors=True)
+def get_cards(user_id):
     """Get the paginated list of cards from a query"""
-    cardlist_container = dynamo_service.search_cards(user_id, query, page, pagesize)
+    cardlist_container = dynamo_service.search_cards(user_id)
     # This object has 3 main methods: get_list(), get_count(), get_numpages()
-    cards = cardlist_container.get_list()
-    print( [c.names for c in cards] )
+    # cards = cardlist_container.get_list()
+    # print( [c.names for c in cards] )
+
+    cards_list = []
+    index = 1
+    for item in cardlist_container['Items']:
+        obj = {
+            'id': index,
+            'card_id': item['card_id']['S'],
+            'name': item['company_name']['S'],
+            'phone': item['telephone_numbers']['SS'][0],
+            'email': item['email_addresses']['SS'][0],
+            'website': item['company_website']['S'],
+            'address': item['company_address']['S'],
+            'image_storage': item['image_storage']['S']
+        }
+        cards_list.append(obj)
+        index += 1
+
+    return cards_list
 
 
 @app.route('/cards', methods=['POST'], cors=True,
@@ -114,16 +132,20 @@ def post_card():
            content_types=['application/json'])
 def put_card():
     """Updates a card"""
-    parsed = parse_qs(app.current_request.json_body)
-    card = BusinessCard(parsed['user_id'],
-                        parsed['card_id'],
-                        parsed['user_names'],
-                        parsed['telephone_numbers'],
-                        parsed['email_addresses'],
-                        parsed['company_name'],
-                        parsed['company_website'],
-                        parsed['company_address'],
-                        parsed['image_storage'])
+    req_body = app.current_request.json_body
+
+    # parsed = parse_qs(app.current_request.json_body)
+
+
+    card = BusinessCard(req_body['user_id'],
+                        req_body['card_id'],
+                        req_body['name'],
+                        [req_body['phone']],
+                        [req_body['email']],
+                        req_body['name'],
+                        req_body['website'],
+                        req_body['address'],
+                        req_body['image_storage'])
     result = dynamo_service.update_card(card) # True  / False
 
 
@@ -136,4 +158,3 @@ def delete_card(user_id, card_id):
 def get_card(user_id, card_id):
     """Query a specific card by id"""
     return dynamo_service.get_card(user_id, card_id)
-    # return "hello"
