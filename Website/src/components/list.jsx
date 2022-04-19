@@ -135,9 +135,9 @@ function List(props) {
     return (
         <div>
           <div style={styles.container}>
-            <div className="input-container ic1" style={{ border: "2px solid grey"}}>
+            {/* <div className="input-container ic1" style={{ border: "2px solid grey"}}>
                 <input id="search" className="input" value={search} onChange={(e)=>handleSearchChange(e)} type="text" placeholder="Search " />
-            </div>
+            </div> */}
             <CRUDTable
               caption="Cards"
               fetchItems={payload => service.fetchItems(payload)}
