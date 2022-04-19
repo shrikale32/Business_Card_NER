@@ -6,6 +6,7 @@ import {CognitoUserPool} from "amazon-cognito-identity-js";
 function SignUp(props) {
 
     const [email, setEmail] = useState("");
+    const [message, setMessage] = useState(null);
     const [password, setPassword] = useState("");
 
     const onSubmit = (event) => {
@@ -14,13 +15,17 @@ function SignUp(props) {
       UserPool.signUp(email, password, [], null, (err, data) => {
         if (err) {
           console.error(err);
+          setMessage(err.message);
+        }else{
+          console.log(data);
+          window.location = "/login"
         }
-        console.log(data);
-        window.location = "/login"
+
       });
     };
 
     return (
+      <div>
       <div style={{textAlign: "center", position: 'relative', left: '35%', marginTop: '45px'}}>
         <div className="form" style={{height: "450px"}}>
           <div className="title">Sign Up</div>
@@ -34,7 +39,15 @@ function SignUp(props) {
           </div>
 
           <button type="text" className="submit" onClick={(e)=>onSubmit(e)}>Sign Up</button>
+
         </div>
+      </div>
+      <div>
+      {
+        message &&
+        <h4 style={{backgroundColor: '#f88379', padding:"20px", borderRadius: "10px"}}>{message}</h4>
+      }
+      </div>
       </div>
     );
 }

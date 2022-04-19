@@ -95,6 +95,7 @@
 
   .input:focus ~ .placeholder {
     color: #dc2f55;
+    display: none;
   }
 
   .submit {
